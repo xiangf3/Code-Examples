@@ -17,13 +17,20 @@ const lib2 = require('./jsmodule.js');
 // The promise returned by  fetchWeather() will always resolve to the value passed as parameter
 lib2.fetchWeather.mockResolvedValue({ name: 'Philadelphia', main: { temp: 70 } });
 
+const div = document.createElement('div');
+div.setAttribute('id', 'loc');
+document.body.appendChild(div);
+
 describe('fetch and DOM testing with mocking', () => {
   test('the temperature is correct with mocking', async () => {
     const data = await lib2.fetchWeather();
     expect(data.main.temp).toBe(70);
   });
 
-  test('weather data is displayed on the web page', () => {
+  test('weather data is displayed on the web page', async () => {
     // lecture activity
+    await lib1.updateWeather();
+    const loc = document.getElementById('loc');
+    expect(loc.innerHTML).toBe(`Philadelphia : 70`);
   });
 });
