@@ -51,13 +51,26 @@ describe('Test /student endpoint', () => {
 
     // Lecture activity
     test('delete student', () => {
-        
-    
+        request(webapp).delete('/student/-1').expect(400);
+
+        request(webapp).delete('/student/2').expect(200).then(response => {
+            expect(JSON.parse(response.text).message).toMatch(/deleted/);
+            request(webapp).get('/student/2').expect(404);
+        });
     });
     
     test('update student', () => {
-        
-    
+        request(webapp).put('/student/-1').send('name=testuser&email=tt@upenn.edu&major=MCIT')
+        .expect(400);
+
+        request(webapp).put('/student/1').send('name=testuser&email=tt@upenn.edu&major=MCIT')
+        .expect(200).then(response => {
+            expect(JSON.parse(response.text).message).toMatch(/success/);
+            const expected = {"id":1,"name":"testuser","email":"tt@upenn.edu","major":"MCIT"};
+            request(webapp).get('/student/1').expect(200).then(response => {
+                expect(JSON.parse(response.text).data).toEqual(expected);
+            });  
+        })
     });
 });
 
